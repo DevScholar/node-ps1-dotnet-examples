@@ -1,0 +1,19 @@
+{
+  "name": "node-ps1-dotnet-examples",
+  "version": "0.0.0",
+  "description": "Examples for node-ps1-dotnet",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@devscholar/node-ps1-dotnet": "file:../node-ps1-dotnet"
+  },
+  "scripts": {
+    "console-input": "node ../node-ps1-dotnet/start.js src/console/console-input/console-input.ts",
+    "await-delay": "node ../node-ps1-dotnet/start.js src/console/await-delay/await-delay.ts",
+    "winforms-counter": "node ../node-ps1-dotnet/start.js src/winforms/counter/counter.ts",
+    "winforms-drag-box": "node ../node-ps1-dotnet/start.js src/winforms/drag-box/drag-box.ts",
+    "wpf-counter": "node ../node-ps1-dotnet/start.js src/wpf/counter/counter.ts",
+    "wpf-drag-box": "node ../node-ps1-dotnet/start.js src/wpf/drag-box/drag-box.ts",
+    "wpf-webview2": "node ../node-ps1-dotnet/start.js src/wpf/webview2-browser/webview2-browser.ts"
+  }
+}

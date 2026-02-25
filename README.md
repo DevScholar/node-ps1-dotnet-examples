@@ -15,34 +15,40 @@ Examples demonstrating how to use the `node-ps1-dotnet` library to build Windows
 npm install
 ```
 
-This will install the `@devscholar/node-ps1-dotnet` package as a local dependency from `../node-ps1-dotnet`.
+This will install the `@devscholar/node-ps1-dotnet` package from npm.
 
 ## Running Examples
 
-### Using npm scripts
+### Console Examples
 
 ```bash
-npm run console-input       # Console input demo
-npm run await-delay         # Console await delay demo
-npm run winforms-counter    # WinForms Counter App
-npm run winforms-drag-box   # WinForms Draggable Box
-npm run wpf-counter         # WPF Counter App
-npm run wpf-drag-box        # WPF Draggable Box
-npm run wpf-webview2        # WPF WebView2 Browser
+node start.js src/console/console-input/console-input.ts
+node start.js src/console/await-delay/await-delay.ts
 ```
 
-### Using node directly
+### WinForms Examples
 
 ```bash
-node ../node-ps1-dotnet/start.js src/winforms/counter/counter.ts
+node start.js src/winforms/counter/counter.ts
+node start.js src/winforms/drag-box/drag-box.ts
 ```
+
+### WPF Examples
+
+```bash
+node start.js src/wpf/counter/counter.ts
+node start.js src/wpf/drag-box/drag-box.ts
+node start.js src/wpf/webview2-browser/webview2-browser.ts
+```
+
+### Specifying a Runtime
 
 You can also specify a runtime:
 
 ```bash
-node ../node-ps1-dotnet/start.js src/winforms/counter/counter.ts --runtime=deno
-node ../node-ps1-dotnet/start.js src/winforms/counter/counter.ts --runtime=bun
-node ../node-ps1-dotnet/start.js src/winforms/counter/counter.ts --runtime=node
+node start.js src/winforms/counter/counter.ts --runtime=deno
+node start.js src/winforms/counter/counter.ts --runtime=bun
+node start.js src/winforms/counter/counter.ts --runtime=node
 ```
 
 ## Examples

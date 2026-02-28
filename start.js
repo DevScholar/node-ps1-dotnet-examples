@@ -41,7 +41,7 @@ if (!fs.existsSync(filePath)) {
 }
 
 const runtimeFlags = {
-    node: ['--experimental-transform-types'],
+    node: ['--import=@nodejs-loaders/tsx'],
     bun: [],
     deno: ['run', '--allow-all', '--unstable-node-globals']
 };

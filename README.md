@@ -5,7 +5,7 @@ Examples demonstrating how to use the `node-ps1-dotnet` library to build Windows
 ## Prerequisites
 
 - Windows 10/11
-- Node.js 22+
+- Node.js 18+ (LTS version recommended)
 - PowerShell 5.1 (built-in on Windows)
 - .NET Framework 4.5+ (pre-installed on Windows 10/11)
 

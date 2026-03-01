@@ -222,7 +222,7 @@ async function install(version = DEFAULT_VERSION) {
         fs.mkdirSync(versionDir, { recursive: true });
     }
 
-    const currentVersionFile = path.join(RUNTIMES_DIR, 'current');
+    const currentVersionFile = path.join(RUNTIMES_DIR, 'current.txt');
     
     if (fs.existsSync(currentVersionFile)) {
         const currentVersion = fs.readFileSync(currentVersionFile, 'utf-8').trim();
@@ -235,6 +235,9 @@ async function install(version = DEFAULT_VERSION) {
 
     const nupkgPath = await downloadNupkg(version, versionDir);
     const dlls = await extractNupkg(nupkgPath, versionDir);
+
+    fs.unlinkSync(nupkgPath);
+    log('Removed nupkg file', 'blue');
 
     fs.writeFileSync(currentVersionFile, version);
 
@@ -253,7 +256,7 @@ async function listInstalled() {
         return;
     }
 
-    const currentVersionFile = path.join(RUNTIMES_DIR, 'current');
+    const currentVersionFile = path.join(RUNTIMES_DIR, 'current.txt');
     let currentVersion = '';
     if (fs.existsSync(currentVersionFile)) {
         currentVersion = fs.readFileSync(currentVersionFile, 'utf-8').trim();
@@ -281,7 +284,7 @@ async function use(version) {
         process.exit(1);
     }
 
-    const currentVersionFile = path.join(RUNTIMES_DIR, 'current');
+    const currentVersionFile = path.join(RUNTIMES_DIR, 'current.txt');
     fs.writeFileSync(currentVersionFile, version);
     log(`Now using WebView2 ${version}`, 'green');
 }
@@ -293,7 +296,7 @@ async function remove(version) {
         process.exit(1);
     }
 
-    const currentVersionFile = path.join(RUNTIMES_DIR, 'current');
+    const currentVersionFile = path.join(RUNTIMES_DIR, 'current.txt');
     if (fs.existsSync(currentVersionFile)) {
         const currentVersion = fs.readFileSync(currentVersionFile, 'utf-8').trim();
         if (currentVersion === version) {

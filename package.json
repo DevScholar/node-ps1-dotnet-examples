@@ -4,6 +4,11 @@
   "description": "Examples for node-ps1-dotnet",
   "private": true,
   "type": "module",
+  "files": [
+    "dist",
+    "runtimes",
+    "scripts"
+  ],
   "dependencies": {
     "@devscholar/node-ps1-dotnet": "latest"
   },
@@ -12,13 +17,17 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && xcopy public dist\\public /E /I /Y",
     "console-input": "node start.js src/console/console-input/console-input.ts",
     "await-delay": "node start.js src/console/await-delay/await-delay.ts",
     "winforms-counter": "node start.js src/winforms/counter/counter.ts",
     "winforms-drag-box": "node start.js src/winforms/drag-box/drag-box.ts",
     "wpf-counter": "node start.js src/wpf/counter/counter.ts",
     "wpf-drag-box": "node start.js src/wpf/drag-box/drag-box.ts",
-    "wpf-webview2": "node start.js src/wpf/webview2-browser/webview2-browser.ts"
+    "wpf-webview2": "node start.js src/wpf/webview2-browser/webview2-browser.ts",
+    "webview2:install": "node scripts/webview2-install.js install",
+    "webview2:install:latest": "node scripts/webview2-install.js install latest",
+    "webview2:list": "node scripts/webview2-install.js list",
+    "webview2:latest": "node scripts/webview2-install.js latest"
   }
 }

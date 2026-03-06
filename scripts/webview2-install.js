@@ -7,8 +7,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const ROOT_DIR = path.join(__dirname, '..');
-const RUNTIMES_DIR = path.join(ROOT_DIR, 'runtimes', 'webview2');
+const RUNTIMES_DIR = path.join(__dirname, '..', 'runtimes', 'webview2');
 
 const DEFAULT_VERSION = 'latest';
 const PACKAGE_NAME = 'Microsoft.Web.WebView2';
@@ -34,7 +33,7 @@ async function fetchJson(url, redirectCount = 0) {
     if (redirectCount > 5) {
         throw new Error('Too many redirects');
     }
-    
+
     return new Promise((resolve, reject) => {
         const req = https.get(url, { headers: { 'Accept': 'application/json' } }, (res) => {
             if (res.statusCode === 301 || res.statusCode === 302) {
@@ -44,7 +43,7 @@ async function fetchJson(url, redirectCount = 0) {
                     return;
                 }
             }
-            
+
             let data = '';
             res.on('data', chunk => data += chunk);
             res.on('end', () => {
@@ -62,7 +61,7 @@ async function downloadFile(url, dest, redirectCount = 0) {
     if (redirectCount > 5) {
         throw new Error('Too many redirects');
     }
-    
+
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream(dest);
         https.get(url, (res) => {
@@ -74,7 +73,7 @@ async function downloadFile(url, dest, redirectCount = 0) {
                     return;
                 }
             }
-            
+
             res.pipe(file);
             file.on('finish', () => {
                 file.close();
@@ -99,30 +98,25 @@ async function getServiceIndex() {
 
 async function getLatestVersion() {
     log('Fetching latest version from NuGet...', 'blue');
-    
+
     const index = await getServiceIndex();
     const searchResource = index.resources.find(r => r['@type'] === 'SearchQueryService');
     const searchUrl = searchResource['@id'];
-    
+
     const data = await fetchJson(`${searchUrl}?take=1&q=${PACKAGE_NAME}&prerelease=false`);
-    
+
     if (data.data && data.data.length > 0) {
         const item = data.data[0];
         const versionObj = item.versions[item.versions.length - 1];
         return versionObj.version;
     }
-    
-    throw new Error('Could not find latest version');
-}
 
-async function getPackageInfo(version) {
-    log(`Fetching package info for ${PACKAGE_NAME} ${version}...`, 'blue');
-    return { version };
+    throw new Error('Could not find latest version');
 }
 
 async function downloadNupkg(version, destDir) {
     const nupkgPath = path.join(destDir, `${PACKAGE_NAME}.${version}.nupkg`);
-    
+
     if (fs.existsSync(nupkgPath)) {
         log(`Package already exists: ${nupkgPath}`, 'yellow');
         return nupkgPath;
@@ -137,17 +131,17 @@ async function downloadNupkg(version, destDir) {
 
 async function extractNupkg(nupkgPath, destDir) {
     log('Extracting package...', 'blue');
-    
+
     const tempDir = path.join(destDir, 'temp_extract');
     if (!fs.existsSync(tempDir)) {
         fs.mkdirSync(tempDir, { recursive: true });
     }
 
     const { spawn } = await import('child_process');
-    
+
     const zipPath = nupkgPath.replace('.nupkg', '.zip');
     fs.copyFileSync(nupkgPath, zipPath);
-    
+
     await new Promise((resolve, reject) => {
         const proc = spawn('powershell', [
             '-Command',
@@ -156,7 +150,7 @@ async function extractNupkg(nupkgPath, destDir) {
             stdio: 'ignore',
             detached: false
         });
-        
+
         proc.on('close', (code) => {
             if (code === 0) {
                 resolve();
@@ -164,20 +158,20 @@ async function extractNupkg(nupkgPath, destDir) {
                 reject(new Error(`Extraction failed with code ${code}`));
             }
         });
-        
+
         proc.on('error', reject);
-        
+
         setTimeout(() => {
             proc.kill();
             reject(new Error('Extraction timeout'));
         }, 30000);
     });
-    
+
     log('Extracted successfully', 'green');
 
     const libDir = path.join(tempDir, 'lib');
     const dlls = [];
-    
+
     if (fs.existsSync(libDir)) {
         const subdirs = fs.readdirSync(libDir);
         for (const subdir of subdirs) {
@@ -197,7 +191,24 @@ async function extractNupkg(nupkgPath, destDir) {
         }
     }
 
-    // Extract license files
+    const arch = process.arch;
+    const runtimeArch = arch === 'ia32' ? 'win-x86' : arch === 'arm64' ? 'win-arm64' : 'win-x64';
+    const nativeDir = path.join(tempDir, 'runtimes', runtimeArch, 'native');
+    if (fs.existsSync(nativeDir)) {
+        const nativeFiles = fs.readdirSync(nativeDir);
+        for (const file of nativeFiles) {
+            if (file.endsWith('.dll')) {
+                const srcPath = path.join(nativeDir, file);
+                const destPath = path.join(destDir, file);
+                fs.copyFileSync(srcPath, destPath);
+                dlls.push(destPath);
+                log(`  Extracted (${runtimeArch}): ${file}`, 'green');
+            }
+        }
+    } else {
+        log(`  Warning: native dir not found for ${runtimeArch}: ${nativeDir}`, 'yellow');
+    }
+
     const licenseFiles = ['LICENSE.txt', 'NOTICE.txt'];
     for (const licenseFile of licenseFiles) {
         const srcPath = path.join(tempDir, licenseFile);
@@ -223,7 +234,7 @@ async function install(version = DEFAULT_VERSION) {
     }
 
     const currentVersionFile = path.join(RUNTIMES_DIR, 'current.txt');
-    
+
     if (fs.existsSync(currentVersionFile)) {
         const currentVersion = fs.readFileSync(currentVersionFile, 'utf-8').trim();
         if (currentVersion === version) {
@@ -243,7 +254,7 @@ async function install(version = DEFAULT_VERSION) {
 
     log(`\nSuccessfully installed ${PACKAGE_NAME} ${version}`, 'green');
     log(`DLLs location: ${versionDir}`, 'green');
-    
+
     if (dlls.length > 0) {
         log('\nExtracted DLLs:', 'green');
         dlls.forEach(d => log(`  - ${path.basename(d)}`, 'reset'));
@@ -263,7 +274,7 @@ async function listInstalled() {
     }
 
     const versions = fs.readdirSync(RUNTIMES_DIR).filter(v => v !== 'current');
-    
+
     if (versions.length === 0) {
         log('No versions installed', 'yellow');
         return;
@@ -325,12 +336,12 @@ Usage: node scripts/webview2-install.js <command> [options]
 
 Commands:
     install [version]    Install WebView2 version (default: latest)
-                         Use 'latest' to install the latest version
-    use <version>        Switch to a specific installed version
+                        Use 'latest' to install the latest version
+    use <version>       Switch to a specific installed version
     remove <version>    Remove a specific version
-    list                 List installed versions
-    info [version]       Show package info (default: latest)
-    latest               Show the latest available version
+    list                List installed versions
+    info [version]      Show package info (default: latest)
+    latest              Show the latest available version
 
 Examples:
     node scripts/webview2-install.js install

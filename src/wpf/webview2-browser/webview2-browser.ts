@@ -7,8 +7,12 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const RUNTIMES_DIR = path.join(__dirname, '..', '..', '..', 'runtimes', 'webview2');
-const currentVersionFile = path.join(RUNTIMES_DIR, 'current');
+const PROJECT_ROOT = path.join(__dirname, '..', '..', '..');
+const RUNTIMES_DIR = path.join(PROJECT_ROOT, 'runtimes', 'webview2');
+
+const DIST_DIR = path.join(PROJECT_ROOT, 'dist');
+const PUBLIC_DIR = fs.existsSync(DIST_DIR) ? path.join(DIST_DIR, 'public') : path.join(PROJECT_ROOT, 'public');
+const currentVersionFile = path.join(RUNTIMES_DIR, 'current.txt');
 
 let webview2LibPath: string;
 
@@ -34,7 +38,7 @@ const wpfDllPath = path.join(webview2LibPath, 'Microsoft.Web.WebView2.Wpf.dll');
 
 if (!fs.existsSync(coreDllPath) || !fs.existsSync(wpfDllPath)) {
     console.error('\x1b[31mError: WebView2 DLLs not found!\x1b[0m');
-    console.error('Please run: node ../node-ps1-dotnet/scripts/webview2-install.js install');
+    console.error('Please run: node scripts/webview2-install.js install');
     process.exit(1);
 }
 
@@ -50,10 +54,14 @@ const WebView2WpfAssembly = System.Reflection.Assembly.LoadFrom(wpfDllPath);
 
 import os from 'node:os';
 const USER_DATA_FOLDER = fs.mkdtempSync(path.join(os.tmpdir(), 'webview2-'));
-const COUNTER_HTML_PATH = path.join(__dirname, 'counter.html');
+const COUNTER_HTML_PATH = path.resolve(PUBLIC_DIR, 'counter.html');
 
 console.log('--- Initializing WebView2 (Counter App) ---');
+console.log('Project root:', PROJECT_ROOT);
+console.log('Current directory:', __dirname);
 console.log('User data folder:', USER_DATA_FOLDER);
+console.log('HTML file path:', COUNTER_HTML_PATH);
+console.log('HTML file exists:', fs.existsSync(COUNTER_HTML_PATH));
 
 process.on('exit', () => {
     try {
@@ -126,7 +134,9 @@ webView.add_NavigationCompleted((sender: any, e: any) => {
     console.log('Page Loaded Successfully');
 });
 
-webView.Source = new System.Uri(COUNTER_HTML_PATH);
+const htmlUri = new System.Uri(COUNTER_HTML_PATH);
+console.log('Loading HTML from URI:', htmlUri.ToString());
+webView.Source = htmlUri;
 
 browserWindow.add_Closed((sender: any, e: any) => {
     process.exit(0);

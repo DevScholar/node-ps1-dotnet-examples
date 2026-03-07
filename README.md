@@ -51,6 +51,17 @@ node start.js src/winforms/counter/counter.ts --runtime=bun
 node start.js src/winforms/counter/counter.ts --runtime=node
 ```
 
+### Running with Deno or Bun Directly
+
+If you want to run `start.js` directly with Deno or Bun instead of Node.js, you need to grant file system and process permissions:
+
+```bash
+deno run --allow-all start.js src/wpf/drag-box/drag-box.ts
+bun start.js src/wpf/drag-box/drag-box.ts
+```
+
+Note: The `--runtime=deno` and `--runtime=bun` options above use Node.js to run `start.js`, which then spawns the specified runtime to execute the compiled JavaScript. If you want to run `start.js` itself with Deno/Bun, use the commands above instead.
+
 ## Examples
 
 | Example | Description |

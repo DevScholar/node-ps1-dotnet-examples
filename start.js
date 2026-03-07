@@ -4,8 +4,14 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+let __filename, __dirname;
+try {
+    __filename = fileURLToPath(import.meta.url);
+    __dirname = path.dirname(__filename);
+} catch {
+    __filename = process.argv[1];
+    __dirname = path.dirname(__filename);
+}
 
 const args = process.argv.slice(2);
 let runtime = 'node';
@@ -42,7 +48,7 @@ if (!fs.existsSync(filePath)) {
 const runtimeFlags = {
     node: [],
     bun: [],
-    deno: ['run', '--allow-all', '--unstable-node-globals']
+    deno: ['run', '--allow-all', '--allow-read', '--allow-write', '--allow-env', '--allow-spawn', '--unstable-node-globals']
 };
 
 async function buildAndRun() {

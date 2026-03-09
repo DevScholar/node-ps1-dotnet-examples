@@ -6,11 +6,10 @@
   "type": "module",
   "files": [
     "dist",
-    "runtimes",
-    "scripts"
+    "runtimes"
   ],
   "dependencies": {
-    "@devscholar/node-ps1-dotnet": "latest"
+    "@devscholar/node-ps1-dotnet": "^0.0.9"
   },
   "devDependencies": {
     "@types/node": "^25.3.3",

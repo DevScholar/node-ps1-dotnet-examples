@@ -9,7 +9,7 @@
     "runtimes"
   ],
   "dependencies": {
-    "@devscholar/node-ps1-dotnet": "^0.0.9"
+    "@devscholar/node-ps1-dotnet": "file:../node-ps1-dotnet"
   },
   "devDependencies": {
     "@types/node": "^25.3.3",
@@ -21,8 +21,10 @@
     "await-delay": "node start.js src/console/await-delay/await-delay.ts",
     "winforms-counter": "node start.js src/winforms/counter/counter.ts",
     "winforms-drag-box": "node start.js src/winforms/drag-box/drag-box.ts",
+    "winforms-blocking-dialog": "node start.js src/winforms/blocking-dialog/blocking-dialog.ts",
     "wpf-counter": "node start.js src/wpf/counter/counter.ts",
     "wpf-drag-box": "node start.js src/wpf/drag-box/drag-box.ts",
+    "wpf-blocking-dialog": "node start.js src/wpf/blocking-dialog/blocking-dialog.ts",
     "wpf-webview2": "node start.js src/wpf/webview2-browser/webview2-browser.ts",
     "webview2:install": "node scripts/webview2-install.js install",
     "webview2:install:latest": "node scripts/webview2-install.js install latest",

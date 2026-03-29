@@ -43,7 +43,6 @@ let startBoxX = 0;
 let startBoxY = 0;
 
 box.add_MouseDown((sender: any, e: any) => {
-    console.log('[DEBUG] MouseDown');
     isDragging = true;
     const pos = e.GetPosition(canvas);
     startMouseX = pos.X;
@@ -55,7 +54,6 @@ box.add_MouseDown((sender: any, e: any) => {
 });
 
 box.add_MouseUp((sender: any, e: any) => {
-    console.log('[DEBUG] MouseUp');
     isDragging = false;
     box.Background = Media.Brushes.Red;
     box.ReleaseMouseCapture();

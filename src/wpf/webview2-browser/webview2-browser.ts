@@ -56,18 +56,10 @@ import os from 'node:os';
 const USER_DATA_FOLDER = fs.mkdtempSync(path.join(os.tmpdir(), 'webview2-'));
 const COUNTER_HTML_PATH = path.resolve(PUBLIC_DIR, 'counter.html');
 
-console.log('--- Initializing WebView2 (Counter App) ---');
-console.log('Project root:', PROJECT_ROOT);
-console.log('Current directory:', __dirname);
-console.log('User data folder:', USER_DATA_FOLDER);
-console.log('HTML file path:', COUNTER_HTML_PATH);
-console.log('HTML file exists:', fs.existsSync(COUNTER_HTML_PATH));
-
 process.on('exit', () => {
     try {
         if (fs.existsSync(USER_DATA_FOLDER)) {
             fs.rmSync(USER_DATA_FOLDER, { recursive: true, force: true });
-            console.log('Cleaned up temp folder:', USER_DATA_FOLDER);
         }
     } catch (e) { }
 });
@@ -102,8 +94,6 @@ grid.Children.Add(webView);
 
 webView.add_CoreWebView2InitializationCompleted((sender: any, e: any) => {
     if (e.IsSuccess) {
-        console.log('WebView2 Initialized Successfully');
-
         const coreWebView2 = webView.CoreWebView2;
 
         coreWebView2.add_WebMessageReceived((sender2: any, e2: any) => {
@@ -130,12 +120,7 @@ webView.add_CoreWebView2InitializationCompleted((sender: any, e: any) => {
     }
 });
 
-webView.add_NavigationCompleted((sender: any, e: any) => {
-    console.log('Page Loaded Successfully');
-});
-
 const htmlUri = new System.Uri(COUNTER_HTML_PATH);
-console.log('Loading HTML from URI:', htmlUri.ToString());
 webView.Source = htmlUri;
 
 browserWindow.add_Closed((sender: any, e: any) => {

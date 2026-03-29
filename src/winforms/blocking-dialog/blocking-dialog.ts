@@ -57,7 +57,7 @@ console.log("Showing dialog to get user input...\n");
 const result = form.ShowDialog();
 
 if (result === 1) {
-    const brand = String(textBox.Text).trim();
+    const brand = textBox.Text.trim();
     if (brand !== "") {
         console.log(`You are using a ${brand} computer.`);
     } else {

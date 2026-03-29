@@ -54,7 +54,7 @@ form.CancelButton = cancelButton;
 console.log("--- Blocking Dialog Example ---");
 console.log("Showing dialog to get user input...\n");
 
-const result = await form.ShowDialog();
+const result = form.ShowDialog();
 
 if (result === 1) {
     const brand = String(textBox.Text).trim();

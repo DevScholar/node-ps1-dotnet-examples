@@ -43,6 +43,7 @@ okButton.Padding = new Windows.Thickness(10, 5, 10, 5);
 okButton.IsDefault = true;
 okButton.add_Click(() => {
     dialog.DialogResult = true;
+    // Setting DialogResult closes the WPF dialog; no need for dialog.Close()
 });
 buttonPanel.Children.Add(okButton);
 

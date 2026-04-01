@@ -48,7 +48,7 @@ if (!fs.existsSync(filePath)) {
 const runtimeFlags = {
     node: [],
     bun: [],
-    deno: ['run', '--allow-all', '--allow-read', '--allow-write', '--allow-env', '--allow-spawn', '--unstable-node-globals']
+    deno: ['run', '--allow-all', '--unstable-node-globals']
 };
 
 async function buildAndRun() {

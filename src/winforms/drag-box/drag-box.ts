@@ -8,54 +8,74 @@ const System = dotnet.System as any;
 const Forms = System.Windows.Forms;
 const Drawing = System.Drawing;
 
-console.log("--- WinForms Draggable Box ---");
+console.log("--- WinForms Canvas Drawing ---");
 
 Forms.Application.EnableVisualStyles();
 Forms.Application.SetCompatibleTextRenderingDefault(false);
 
 const form = new Forms.Form();
-form.Text = "Draggable Box Example (High Frequency IPC)";
+form.Text = "Draggable Box Example (Canvas)";
 form.Width = 800;
 form.Height = 600;
-form.StartPosition = 1;
+form.StartPosition = 1; // CenterScreen
 
-const box = new Forms.Panel();
-box.BackColor = Drawing.Color.Red;
-box.Width = 100;
-box.Height = 100;
+// PictureBox as canvas, docked to fill the entire form client area.
+const canvas = new Forms.PictureBox();
+canvas.Dock = 5; // DockStyle.Fill
+form.Controls.Add(canvas);
 
-box.Location = new Drawing.Point(350, 250);
+// Draw into a Bitmap and assign it as the PictureBox image.
+// This avoids the Paint event re-entry issue: if we handled addSync_Paint and called
+// g.FillRectangle() inside it, C# would deadlock (blocked waiting for JS, while JS
+// is blocked waiting for C# to handle the draw call).
+const bitmap = new Drawing.Bitmap(800, 600);
+const g = Drawing.Graphics.FromImage(bitmap);
+canvas.Image = bitmap;
 
-form.Controls.Add(box);
+const boxW = 100;
+const boxH = 100;
+let boxX = 350;
+let boxY = 250;
 
 let isDragging = false;
 let startDragOffsetX = 0;
 let startDragOffsetY = 0;
-let currentX = 350;
-let currentY = 250;
 
-box.add_MouseDown((sender: any, e: any) => {
-    isDragging = true;
-    startDragOffsetX = e.X;
-    startDragOffsetY = e.Y;
-    box.BackColor = Drawing.Color.DarkRed;
+// Pre-create brushes to avoid GDI handle churn on every redraw.
+const brushRed     = new Drawing.SolidBrush(Drawing.Color.Red);
+const brushDarkRed = new Drawing.SolidBrush(Drawing.Color.DarkRed);
+
+function redraw() {
+    g.Clear(Drawing.Color.White);
+    g.FillRectangle(isDragging ? brushDarkRed : brushRed, boxX, boxY, boxW, boxH);
+    canvas.Invalidate();
+}
+
+redraw();
+
+canvas.add_MouseDown((sender: any, e: any) => {
+    const mx = e.X;
+    const my = e.Y;
+    if (mx >= boxX && mx < boxX + boxW && my >= boxY && my < boxY + boxH) {
+        isDragging = true;
+        startDragOffsetX = mx - boxX;
+        startDragOffsetY = my - boxY;
+        redraw();
+    }
 });
 
-box.add_MouseUp((sender: any, e: any) => {
-    isDragging = false;
-    box.BackColor = Drawing.Color.Red;
-});
-
-// MouseMove on the box. e.X/e.Y is relative to the box's current position.
-// We accumulate into currentX/currentY (JS-side) to avoid reading box.Left over IPC.
-// With poll-batch coalescing, only the last MouseMove per batch is dispatched, so
-// each handler call represents a net displacement from the last applied position.
-box.add_MouseMove((sender: any, e: any) => {
+canvas.add_MouseUp((sender: any, e: any) => {
     if (isDragging) {
-        currentX += e.X - startDragOffsetX;
-        currentY += e.Y - startDragOffsetY;
-        box.Left = currentX;
-        box.Top  = currentY;
+        isDragging = false;
+        redraw();
+    }
+});
+
+canvas.add_MouseMove((sender: any, e: any) => {
+    if (isDragging) {
+        boxX = e.X - startDragOffsetX;
+        boxY = e.Y - startDragOffsetY;
+        redraw();
     }
 });
 

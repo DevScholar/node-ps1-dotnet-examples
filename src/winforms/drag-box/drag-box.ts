@@ -28,8 +28,8 @@ form.Controls.Add(canvas);
 // This avoids the Paint event re-entry issue: if we handled addSync_Paint and called
 // g.FillRectangle() inside it, C# would deadlock (blocked waiting for JS, while JS
 // is blocked waiting for C# to handle the draw call).
-const bitmap = new Drawing.Bitmap(800, 600);
-const g = Drawing.Graphics.FromImage(bitmap);
+let bitmap = new Drawing.Bitmap(800, 600);
+let g = Drawing.Graphics.FromImage(bitmap);
 canvas.Image = bitmap;
 
 const boxW = 100;
@@ -80,4 +80,18 @@ canvas.add_MouseMove((sender: any, e: any) => {
 });
 
 console.log("Initialization complete. Try dragging the red box!");
+
+// Recreate the bitmap when the form is resized so the canvas always fills the window.
+form.add_Resize((sender: any, e: any) => {
+    const w = canvas.Width;
+    const h = canvas.Height;
+    if (w > 0 && h > 0) {
+        g.Dispose();
+        bitmap = new Drawing.Bitmap(w, h);
+        g = Drawing.Graphics.FromImage(bitmap);
+        canvas.Image = bitmap;
+        redraw();
+    }
+});
+
 Forms.Application.Run(form);

@@ -24,15 +24,15 @@ box.BackColor = Drawing.Color.Red;
 box.Width = 100;
 box.Height = 100;
 
-let currentX = 350;
-let currentY = 250;
-box.Location = new Drawing.Point(currentX, currentY);
+box.Location = new Drawing.Point(350, 250);
 
 form.Controls.Add(box);
 
 let isDragging = false;
 let startDragOffsetX = 0;
 let startDragOffsetY = 0;
+let currentX = 350;
+let currentY = 250;
 
 box.add_MouseDown((sender: any, e: any) => {
     isDragging = true;
@@ -46,13 +46,16 @@ box.add_MouseUp((sender: any, e: any) => {
     box.BackColor = Drawing.Color.Red;
 });
 
+// MouseMove on the box. e.X/e.Y is relative to the box's current position.
+// We accumulate into currentX/currentY (JS-side) to avoid reading box.Left over IPC.
+// With poll-batch coalescing, only the last MouseMove per batch is dispatched, so
+// each handler call represents a net displacement from the last applied position.
 box.add_MouseMove((sender: any, e: any) => {
     if (isDragging) {
-        currentX = currentX + e.X - startDragOffsetX;
-        currentY = currentY + e.Y - startDragOffsetY;
-        
+        currentX += e.X - startDragOffsetX;
+        currentY += e.Y - startDragOffsetY;
         box.Left = currentX;
-        box.Top = currentY;
+        box.Top  = currentY;
     }
 });
 

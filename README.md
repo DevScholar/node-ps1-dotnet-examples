@@ -40,6 +40,7 @@ node start.js src/winforms/blocking-dialog/blocking-dialog.ts
 node start.js src/wpf/counter/counter.ts
 node start.js src/wpf/drag-box/drag-box.ts
 node start.js src/wpf/webview2-browser/webview2-browser.ts
+node start.js src/wpf/webview2-custom-protocol/webview2-custom-protocol.ts
 node start.js src/wpf/blocking-dialog/blocking-dialog.ts
 ```
 

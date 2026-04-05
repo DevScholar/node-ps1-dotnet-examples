@@ -6,7 +6,7 @@
 // Key patterns used:
 //   - CoreWebView2CustomSchemeRegistration + CoreWebView2EnvironmentOptions
 //   - CoreWebView2Environment.CreateAsync() with temp userDataFolder
-//   - addSync_WebResourceRequested: handler returns {html, statusCode, reasonPhrase},
+//   - add_WebResourceRequested: handler returns {html, statusCode, reasonPhrase},
 //     C# creates the WebResourceResponse directly (no nested IPC calls needed)
 
 import dotnet from '@devscholar/node-ps1-dotnet';
@@ -109,10 +109,10 @@ try {
 const coreWebView2 = webView.CoreWebView2;
 coreWebView2.AddWebResourceRequestedFilter('myapp://*', CoreWebView2WebResourceContextAll);
 
-// addSync_WebResourceRequested: handler returns {html, statusCode, reasonPhrase}.
+// add_WebResourceRequested: handler returns {html, statusCode, reasonPhrase}.
 // C# creates the MemoryStream + WebResourceResponse directly — nested IPC calls
 // inside sync event handlers deadlock due to pipe write blocking.
-coreWebView2.addSync_WebResourceRequested((_sender: any, e: any) => {
+coreWebView2.add_WebResourceRequested((_sender: any, e: any) => {
     const request = e.Request;
     const method: string = request.Method;
     const uri: string = request.Uri;

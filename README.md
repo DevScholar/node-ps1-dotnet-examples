@@ -43,6 +43,12 @@ node start.js src/wpf/webview2-browser/webview2-browser.ts
 node start.js src/wpf/webview2-custom-protocol/webview2-custom-protocol.ts
 node start.js src/wpf/blocking-dialog/blocking-dialog.ts
 ```
+## COM Objects Examples
+
+```bash
+node start.js src/activex/fso/fso.ts
+node start.js src/activex/wscript-shell/wscript-shell.ts
+```
 
 ### Specifying a Runtime
 

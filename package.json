@@ -27,6 +27,8 @@
     "wpf-blocking-dialog": "node start.js src/wpf/blocking-dialog/blocking-dialog.ts",
     "wpf-webview2": "node start.js src/wpf/webview2-browser/webview2-browser.ts",
     "webview2:install": "node scripts/webview2-install.js install",
+    "activex-fso": "node start.js src/activex/fso/fso.ts",
+    "activex-wscript-shell": "node start.js src/activex/wscript-shell/wscript-shell.ts",
     "webview2:install:latest": "node scripts/webview2-install.js install latest",
     "webview2:list": "node scripts/webview2-install.js list",
     "webview2:latest": "node scripts/webview2-install.js latest"

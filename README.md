@@ -43,11 +43,12 @@ node start.js src/wpf/webview2-browser/webview2-browser.ts
 node start.js src/wpf/webview2-custom-protocol/webview2-custom-protocol.ts
 node start.js src/wpf/blocking-dialog/blocking-dialog.ts
 ```
-## COM Objects Examples
+### COM / ActiveX Examples
 
 ```bash
 node start.js src/activex/fso/fso.ts
 node start.js src/activex/wscript-shell/wscript-shell.ts
+node start.js src/activex/wmi/wmi.ts
 ```
 
 ### Specifying a Runtime
@@ -73,6 +74,9 @@ node start.js src/winforms/counter/counter.ts --runtime=node
 | `wpf/drag-box` | WPF draggable box demo |
 | `wpf/webview2-browser` | WPF WebView2 browser demo |
 | `wpf/blocking-dialog` | WPF blocking dialog demo - shows a modal dialog that blocks Node.js execution until closed |
+| `activex/fso` | `Scripting.FileSystemObject` — read files and enumerate directories via `ActiveXObject` |
+| `activex/wscript-shell` | `WScript.Shell` — run commands and read registry via `ActiveXObject` |
+| `activex/wmi` | WMI queries via `GetObject("winmgmts:")` — OS, CPU, and process info |
 
 ## Blocking Dialog vs Regular Window
 
